@@ -1,0 +1,42 @@
+{
+  "name": "ses",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^3.9.3",
+    "@material-ui/icons": "^3.0.2",
+    "@sweetalert/with-react": "^0.1.1",
+    "britecharts-react": "^0.5.1",
+    "classnames": "^2.2.6",
+    "mui-datatables": "^2.2.0",
+    "prop-types": "^15.6.2",
+    "react": "^16.7.0",
+    "react-bootstrap": "^0.32.4",
+    "react-dom": "^16.7.0",
+    "react-loading-overlay": "^1.0.1",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "2.1.3",
+    "react-spinners": "^0.5.1",
+    "reactstrap": "^8.0.0",
+    "recharts": "^1.7.1",
+    "sweetalert": "^2.1.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "upload": "s3cmd sync --add-header='content-type':'text/css' build/* s3://sesemi && echo '🚀  Deployed!'",
+    "upload2": "s3cmd --add-header='Cache-Control: no-cache' --no-mime-magic --guess-mime-type sync build/* s3://sesemi && echo '🚀  Deployed!'",
+    "deploy": "npm run build && s3cmd sync build/* s3://sesemi && echo '🚀  Deployed!'",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
