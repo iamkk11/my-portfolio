@@ -24,10 +24,13 @@ export class Days extends Component {
             if (response.success === true){
                 this.setState({daysLeftData:response.data,ai:false})
             }
+            else{
+                this.setState({ai:false})
+            }
         })
         .catch((error) => {
             this.setState({ai:false})
-            console.log(error);
+            console.log(error)
         })
     }
 

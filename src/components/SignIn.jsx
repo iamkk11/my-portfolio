@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import {Redirect} from 'react-router'
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -21,6 +22,9 @@ import swal from '@sweetalert/with-react';
 import {RingLoader} from 'react-spinners';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import grey from '@material-ui/core/colors/grey';
+import {user_agent} from '../services';
+import * as EdetailsActions from '../actions/EdetailsActions';
+import {withRouter} from "react-router-dom";
 
 const styles = theme => ({
   background:{
@@ -51,17 +55,17 @@ const styles = theme => ({
   },
 });
 
-class SignIn extends Component {
+class Sign extends Component {
   state = {
-    email:'',
-    password:'',
+    email:'kevnkiwan@gmail.com',
+    password:'ul',
     alertSweet:'',
     loader:false,
     emailerror:false,
     passworderror:false,
     resetpasswordstate:false,
     dash:false,
-    myd:false
+    home:false
   }
 
   handleChange = name => event => {
@@ -95,39 +99,37 @@ class SignIn extends Component {
     const options = {
       method:'POST',
       headers:{
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
+        'User-Agent':user_agent,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
       },
       body:data
     }
-    const apiUrl = '/login'
+    const apiUrl = '/auth'
     fetch(apiUrl,options)
     .then((response) => response.json())
     .then((response) => {
       if(response.success===true){
-
-        this.setState({loader:false})
-
+        this.setState({loader:false});
+        this.props.tokenStore(response.token);
+        // _storeData('token',response.token);
         if (response.role === 'admin'){
-          this.setState({dash:true})
-        }
-        else if (response.role === 'super-admin'){
-          this.setState({myd:true})
+          this.setState({dash:true,home:false})
         }
         else if (response.role === 'user'){
-          this.setState({alertSweet:this.sweetAlert("Error logging in",'You are not admin',"error"),error:true})
+          this.setState({dash:false,home:true})
         }
         else{
-          this.setState({alertSweet:this.sweetAlert("Error logging in","Something went wrong. Check your username or password.","error"),error:true})
+          this.setState({alertSweet:this.sweetAlert("Tatizo",".","error"),error:true})
         }
       }
       else{
-        this.setState({alertSweet:this.sweetAlert("Error occured","Response not true.","error"),loader:false,error:true})
+        this.setState({alertSweet:this.sweetAlert("Tatizo","Kuna kitu hakipo sawa.","error"),loader:false,error:true})
       }
 
     })
     .catch((error) => {
-      this.setState({alertSweet:this.sweetAlert("","Oops!Something went wrong","error"),loader:false,error:true})
+      this.setState({alertSweet:this.sweetAlert("","Umekosea username au password","error"),loader:false,error:true})
     })
   }
 
@@ -176,14 +178,14 @@ class SignIn extends Component {
 
   render(){
     const {classes} = this.props;
-    const {dash,myd} = this.state;
+    const {dash,home} = this.state;
         
     if (dash) {
       return <Redirect to = '/dashboard' />
     }
 
-    if (myd){
-      return <Redirect to = '/kevin' />
+    if (home){
+      return <Redirect to = '/home' />
     }
 
     return (
@@ -272,8 +274,22 @@ class SignIn extends Component {
   }
 }
 
-SignIn.propTypes = {
+Sign.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(SignIn);
+const mapStateToProps = (state) => {
+  return {
+    duration:state.ed.duration,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    tokenStore: (token) => dispatch(EdetailsActions.setToken(token))
+  };
+};
+
+export const SignIn = withRouter(connect(mapStateToProps,mapDispatchToProps)(withStyles(styles)(Sign)));
+
+// export default withStyles(styles)(SignIn);

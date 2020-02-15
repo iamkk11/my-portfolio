@@ -23,6 +23,9 @@ export class AgeRange extends Component {
             if(response.success===true){
                 this.setState({sexData:response.data,ai:false})
             }
+            else{
+                this.setState({ai:false})
+            }
         })
         .catch((error) => {
             this.setState({ai:false})

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Grid,Row,Col,Jumbotron,Panel} from 'react-bootstrap';
+import {Container,Row,Col,Jumbotron,Accordion,Card} from 'react-bootstrap';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import PropTypes from 'prop-types';
@@ -117,25 +117,44 @@ const incomeRanges = [
 class AddTenant extends Component {
     state = {
         role:'user',
-        sex:'',
-        ageRange:'',
+        sex:'1',
+        ageRange:'1',
         incomeRange:'',
-        name:'James Bond',
-        username:'kevinkiango@gmail.com',
-        phone:'0714876321',
-        startDate:'2019-05-11',
-        duration:1,
-        unit_id:'1',     
+        name:'',
+        username:'',
+        phone:'',
+        startDate:'',
+        duration:'',
+        unit_id:'',     
 
         loader:false,
         alertSweet:'',
 
         emailError:false,
         roomError:false,
+        startDateError:false,
+        durationError:false,
     };
 
     sweetAlert=(title,text,icon)=>{
         swal({title: title,text: text,icon: icon})
+    }
+
+    handlePhoneNo = () =>{
+        const {phone} = this.state;
+        if(phone ===''){
+            alert('Enter phone number in this format: 255 XXX XXX XXX. e.g 255714876321');
+        }
+        else{
+            const first3Digits = phone.slice(0,3)
+            const phoneNoLength = phone.length;
+            if (phoneNoLength === 12 && first3Digits === '255'){
+              this.handleSubmitButton();
+            }
+            else{
+              alert('Enter phone number in this format: 255 XXX XXX XXX. e.g 255714876321');
+            }
+        }
     }
 
     handleChange = name => event => {
@@ -173,19 +192,27 @@ class AddTenant extends Component {
     }
 
     handleSubmitTenant = ()=>{
-        const {username,unit_id} = this.state;
+        const {username,unit_id,startDate,duration} = this.state;
         this.setState({loader:true})
-        if (username ===''&& unit_id !=='' ){
+        if (username ===''){
             this.sweetAlert('Missing field','Email is empty','error')
             this.setState({emailError:true,loader:false})
         }
-        else if (unit_id ==='' && username!==''){
-            this.sweetAlert('Missing field','Room is empty','error')
+        else if (unit_id ===''){
+            this.sweetAlert('Missing field','Unit id is empty','error')
             this.setState({roomError:true,loader:false})
         }
-        else if (username==='' && unit_id===''){
-            this.sweetAlert('Missing fields','Email & Room are empty','error')
-            this.setState({emailError:true,roomError:true,loader:false})
+        else if (startDate ===''){
+            this.sweetAlert('Missing field','Startdate is empty','error')
+            this.setState({startDateError:true,loader:false})
+        }
+        else if (duration ===''){
+            this.sweetAlert('Missing field','Duration is empty','error')
+            this.setState({durationError:true,loader:false})
+        }
+        else if (username==='' && unit_id==='' && startDate==='' && duration===''){
+            this.sweetAlert('Missing fields','Unit id, Start date, duration & username are missing','error')
+            this.setState({emailError:true,roomError:true,startDateError:true,durationError:true,loader:false})
         }
         else{
             this.registerTenant();
@@ -193,11 +220,14 @@ class AddTenant extends Component {
     }
 
     handleSubmitAdmin = ()=>{
-        const {username} = this.state;
+        const {username,name} = this.state;
         this.setState({loader:true})
         if (username ===''){
             this.sweetAlert('Missing field','Email is empty','error')
             this.setState({emailError:true,loader:false})
+        }
+        else if(name===''){
+            this.sweetAlert('Missing field','Name is empty','error')
         }
         else{
             this.registerTenant();
@@ -224,254 +254,260 @@ class AddTenant extends Component {
         const {classes} = this.props;
         return (
             <div>
-                <Grid>
+                <Container>
                     <Jumbotron className={classes.jumbo}>
                         <Typography variant="diaplay 1" gutterBottom color='default' style={{fontSize:'12',color:'peru',fontWeight:'bold'}}>
-                            Sesemi User Registration Form
+                            User Registration Form
                         </Typography>
                     </Jumbotron>
 
-                    <Panel id="collapsible-panel-personal" defaultExpanded>
-                        <Panel.Heading>
-                            <Panel.Title toggle>
-                                <Typography variant="display 1" gutterBottom color='primary' style={{fontWeight:'bold'}}>
+                    <Accordion>
+                        <Card border="white" bg='light'>
+                            <Accordion.Toggle as={Card.Header}>
+                                <Typography variant="h5" color='primary' style={{fontSize:17}}>
                                     Tenant Info
                                 </Typography>
-                            </Panel.Title>
-                        </Panel.Heading>
-                        <Panel.Collapse>
-                            <Panel.Body>
-                                <Row>
-                                    <Col xs={6} md={4}>
-                                        <form autoComplete="off" spellcheck="false">
-                                            <TextField
-                                                id="outlined-select-role"
-                                                select
-                                                className={classes.textField}
-                                                value={this.state.role}
-                                                onChange={this.handleChange('role')}
-                                                helperText="User role?"
-                                                margin="normal"
-                                                variant="outlined"
-                                                placeholder="Role"
-                                                InputLabelProps={{className: classes.inputLabelProps}}
-                                                InputProps={{className: classes.inputBox}}
-                                                onKeyPress={this._onKeyPress}
-                                                SelectProps={{native:true}}
-                                            >
-                                                {role.map(option => (
-                                                <option key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </option>
-                                                ))}
-                                            </TextField>
-                                        </form>
-                                    </Col>
-                                    <Col xs={6} md={4} xsOffset={4}>
-                                        <form autoComplete="off" spellcheck="false">
-                                            <TextField
-                                                id="outlined-name"
-                                                label="Full Name"
-                                                className={classes.textField}
-                                                value={this.state.name}
-                                                onChange={this.handleChange('name')}
-                                                margin="normal"
-                                                variant="outlined"
-                                                placeholder="Enter Full Name"                                    
-                                                InputLabelProps={{className: classes.inputLabelProps}}
-                                                InputProps={{className: classes.inputBox}}
-                                                onKeyPress={this._onKeyPress}
-                                            />
-                                        </form>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col xs={6} md={4}>
-                                        <form>
-                                            <TextField
-                                                id="outlined-phone"
-                                                label="Phone"
-                                                value={this.state.phone}
-                                                onChange={this.handleChange('phone')}
-                                                type="tel" 
-                                                className={classes.textField}
-                                                margin="normal"
-                                                variant="outlined"
-                                                placeholder="0XXX XXX XXX"
-                                                InputLabelProps={{className: classes.inputLabelProps}}
-                                                InputProps={{className: classes.inputBox}}
-                                                onKeyPress={this._onKeyPress}
-                                            />
-                                        </form>
-                                    </Col>
-                                    <Col xs={6} md={4} xsOffset={4}>
-                                        <form>
-                                            <TextField
-                                                required
-                                                id="outlined-email-input"
-                                                label="Email"
-                                                className={classes.textField}
-                                                type="email"
-                                                autoComplete="email"
-                                                margin="normal"
-                                                variant="outlined"
-                                                value={this.state.username}
-                                                onChange={this.handleChange('username')}
-                                                onFocus={()=>this.setState({emailError:false})}
-                                                placeholder="Enter a valid email address"
-                                                InputLabelProps={{className: classes.inputLabelProps}}
-                                                InputProps={{className: classes.inputBox}}
-                                                error={this.state.emailError}
-                                                onKeyPress={this._onKeyPress}
-                                            />
-                                        </form>
-                                    </Col>
-                                </Row>
-                                <React.Fragment>
-                                    {this.state.role==='user' ? (
+                            </Accordion.Toggle>
+                            <Accordion.Collapse>
+                                <Card.Body>
+                                    <Row>
+                                        <Col xs={6} sm={4} md={4} >
+                                            <form autoComplete="off" spellcheck="false">
+                                                <TextField
+                                                    id="outlined-select-role"
+                                                    select
+                                                    className={classes.textField}
+                                                    value={this.state.role}
+                                                    onChange={this.handleChange('role')}
+                                                    helperText="User role?"
+                                                    margin="normal"
+                                                    variant="outlined"
+                                                    placeholder="Role"
+                                                    InputLabelProps={{className: classes.inputLabelProps}}
+                                                    InputProps={{className: classes.inputBox}}
+                                                    onKeyPress={this._onKeyPress}
+                                                    SelectProps={{native:true}}
+                                                >
+                                                    {role.map(option => (
+                                                    <option key={option.value} value={option.value}>
+                                                        {option.label}
+                                                    </option>
+                                                    ))}
+                                                </TextField>
+                                            </form>
+                                        </Col>
+                                        <Col xs={12} md={{ span: 4,offset:4}}>
+                                            <form autoComplete="off" spellcheck="false">
+                                                <TextField
+                                                    id="outlined-name"
+                                                    label="Full Name"
+                                                    className={classes.textField}
+                                                    value={this.state.name}
+                                                    onChange={this.handleChange('name')}
+                                                    margin="normal"
+                                                    variant="outlined"
+                                                    placeholder="Enter Full Name"                                    
+                                                    InputLabelProps={{className: classes.inputLabelProps}}
+                                                    InputProps={{className: classes.inputBox}}
+                                                    onKeyPress={this._onKeyPress}
+                                                />
+                                            </form>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={6} sm={4} md={4}>
+                                            <form>
+                                                <TextField
+                                                    required
+                                                    id="outlined-phone"
+                                                    label="Phone"
+                                                    value={this.state.phone}
+                                                    onChange={this.handleChange('phone')}
+                                                    type="tel" 
+                                                    className={classes.textField}
+                                                    margin="normal"
+                                                    variant="outlined"
+                                                    placeholder="255XXX XXX XXX"
+                                                    InputLabelProps={{className: classes.inputLabelProps}}
+                                                    InputProps={{className: classes.inputBox}}
+                                                    onKeyPress={this._onKeyPress}
+                                                />
+                                            </form>
+                                        </Col>
+                                        <Col xs={12} md={{ span: 4,offset:4}}>
+                                            <form>
+                                                <TextField
+                                                    required
+                                                    id="outlined-email-input"
+                                                    label="Email"
+                                                    className={classes.textField}
+                                                    type="email"
+                                                    autoComplete="email"
+                                                    margin="normal"
+                                                    variant="outlined"
+                                                    value={this.state.username}
+                                                    onChange={this.handleChange('username')}
+                                                    onFocus={()=>this.setState({emailError:false})}
+                                                    placeholder="Enter a valid email address"
+                                                    InputLabelProps={{className: classes.inputLabelProps}}
+                                                    InputProps={{className: classes.inputBox}}
+                                                    error={this.state.emailError}
+                                                    onKeyPress={this._onKeyPress}
+                                                />
+                                            </form>
+                                        </Col>
+                                    </Row>
                                     <React.Fragment>
-                                        <Row>
-                                            <Col xs={6} md={4}>
-                                                <form spellcheck="false">
-                                                    <TextField
-                                                        required
-                                                        id="outlined-room"
-                                                        label="Room"
-                                                        className={classes.textField}
-                                                        value={this.state.unit_id}
-                                                        onChange={this.handleChange('unit_id')}
-                                                        onFocus={()=>this.setState({roomError:false})}
-                                                        margin="normal"
-                                                        variant="outlined"
-                                                        placeholder="Enter room number"                                    
-                                                        InputLabelProps={{className: classes.inputLabelProps}}
-                                                        InputProps={{className: classes.inputBox}}
-                                                        error={this.state.roomError}
-                                                        onKeyPress={this._onKeyPress}
-                                                    />
-                                                </form>
-                                            </Col>
-                                            <Col xs = {6} md={4} xsOffset={4}>
-                                                <form>
-                                                    <TextField
-                                                        id="outlined-start-date"
-                                                        label="Start Date"
-                                                        type='date'
-                                                        className={classes.textField}
-                                                        margin="normal"
-                                                        variant="outlined"
-                                                        value={this.state.startDate}
-                                                        onChange={this.handleChange('startDate')}
-                                                        InputLabelProps={{shrink: true,fontSize:15}}
-                                                        InputProps={{className: classes.inputBox}}
-                                                        onKeyPress={this._onKeyPress}
-                                                    />
-                                                </form>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col xs = {6} md={4} >
-                                                <form spellcheck="false">
-                                                    <TextField
-                                                        id="outlined-months"
-                                                        label="No of months"
-                                                        type='Number'
-                                                        className={classes.textField}
-                                                        margin="normal"
-                                                        variant="outlined"
-                                                        value={this.state.duration}
-                                                        onChange={this.handleChange('duration')}
-                                                        InputLabelProps={{className: classes.inputLabelProps}}
-                                                        InputProps={{className: classes.inputBox}}
-                                                        onKeyPress={this._onKeyPress}
-                                                    />
-                                                </form>
-                                            </Col>
-                                            <Col xs={6} md={4} xsOffset={4}>
-                                                <form autoComplete="off" spellcheck="false">
-                                                    <TextField
-                                                        id="outlined-select-incomerange"
-                                                        select
-                                                        label='Income'
-                                                        className={classes.textField}
-                                                        value={this.state.incomeRange}
-                                                        onChange={this.handleChange('incomeRange')}
-                                                        helperText="Income Range"
-                                                        margin="normal"
-                                                        variant="outlined"
-                                                        InputLabelProps={{className: classes.inputLabelProps}}
-                                                        InputProps={{className: classes.inputBox}}
-                                                        onKeyPress={this._onKeyPress}
-                                                        SelectProps={{native:true}}
-                                                    >
-                                                        {incomeRanges.map(option => (
-                                                        <option key={option.value} value={option.value}>
-                                                            {option.label}
-                                                        </option>
-                                                        ))}
-                                                    </TextField>
-                                                </form>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col xs={6} md={4} >
-                                                <form autoComplete="off" spellcheck="false">
-                                                    <TextField
-                                                        id="outlined-select-sex"
-                                                        select
-                                                        className={classes.textField}
-                                                        value={this.state.sex}
-                                                        onChange={this.handleChange('sex')}
-                                                        helperText="Gender?"
-                                                        margin="normal"
-                                                        variant="outlined"
-                                                        label="Sex"
-                                                        InputLabelProps={{className: classes.inputLabelProps}}
-                                                        InputProps={{className: classes.inputBox}}
-                                                        onKeyPress={this._onKeyPress}
-                                                        SelectProps={{native:true}}
-                                                    >
-                                                        {sex.map(option => (
-                                                        <option key={option.value} value={option.value}>
-                                                            {option.label}
-                                                        </option>
-                                                        ))}
-                                                    </TextField>
-                                                </form>
-                                            </Col>
-                                            <Col xs={6} md={4} xsOffset={4}>
-                                                <form autoComplete="off" spellcheck="false">
-                                                    <TextField
-                                                        id="outlined-select-agerange"
-                                                        select
-                                                        label='Age'
-                                                        className={classes.textField}
-                                                        value={this.state.ageRange}
-                                                        onChange={this.handleChange('ageRange')}
-                                                        helperText="Age Range"
-                                                        margin="normal"
-                                                        variant="outlined"
-                                                        InputLabelProps={{className: classes.inputLabelProps}}
-                                                        InputProps={{className: classes.inputBox}}
-                                                        onKeyPress={this._onKeyPress}
-                                                        SelectProps={{native:true}}
-                                                    >
-                                                        {ageRanges.map(option => (
-                                                        <option key={option.value} value={option.value}>
-                                                            {option.label}
-                                                        </option>
-                                                        ))}
-                                                    </TextField>
-                                                </form>
-                                            </Col>
-                                        </Row>
+                                        {this.state.role==='user' ? (
+                                        <React.Fragment>
+                                            <Row>
+                                                <Col xs={6} sm={4} md={4}>
+                                                    <form spellcheck="false">
+                                                        <TextField
+                                                            required
+                                                            id="outlined-room"
+                                                            label="Room"
+                                                            className={classes.textField}
+                                                            value={this.state.unit_id}
+                                                            onChange={this.handleChange('unit_id')}
+                                                            onFocus={()=>this.setState({roomError:false})}
+                                                            margin="normal"
+                                                            variant="outlined"
+                                                            placeholder="Enter room number"                                    
+                                                            InputLabelProps={{className: classes.inputLabelProps}}
+                                                            InputProps={{className: classes.inputBox}}
+                                                            error={this.state.roomError}
+                                                            onKeyPress={this._onKeyPress}
+                                                        />
+                                                    </form>
+                                                </Col>
+                                                <Col xs={12} md={{ span: 4,offset:4}}>
+                                                    <form>
+                                                        <TextField
+                                                            id="outlined-start-date"
+                                                            required
+                                                            label="Start Date"
+                                                            type='date'
+                                                            className={classes.textField}
+                                                            margin="normal"
+                                                            variant="outlined"
+                                                            value={this.state.startDate}
+                                                            onChange={this.handleChange('startDate')}
+                                                            InputLabelProps={{shrink: true,fontSize:15}}
+                                                            InputProps={{className: classes.inputBox}}
+                                                            onKeyPress={this._onKeyPress}
+                                                            error={this.state.startDateError}
+                                                            onFocus={()=>this.setState({startDateError:false})}
+                                                        />
+                                                    </form>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col xs={6} sm={4} md={4} >
+                                                    <form spellcheck="false">
+                                                        <TextField
+                                                            id="outlined-months"
+                                                            label="No of months"
+                                                            type='Number'
+                                                            className={classes.textField}
+                                                            margin="normal"
+                                                            variant="outlined"
+                                                            value={this.state.duration}
+                                                            onChange={this.handleChange('duration')}
+                                                            InputLabelProps={{className: classes.inputLabelProps}}
+                                                            InputProps={{className: classes.inputBox}}
+                                                            onKeyPress={this._onKeyPress}
+                                                            error={this.state.durationError}
+                                                            onFocus={()=>this.setState({durationError:false})}
+                                                        />
+                                                    </form>
+                                                </Col>
+                                                <Col xs={12} md={{ span: 4,offset:4}}>
+                                                    <form autoComplete="off" spellcheck="false">
+                                                        <TextField
+                                                            id="outlined-select-incomerange"
+                                                            select
+                                                            label='Income'
+                                                            className={classes.textField}
+                                                            value={this.state.incomeRange}
+                                                            onChange={this.handleChange('incomeRange')}
+                                                            helperText="Income Range"
+                                                            margin="normal"
+                                                            variant="outlined"
+                                                            InputLabelProps={{className: classes.inputLabelProps}}
+                                                            InputProps={{className: classes.inputBox}}
+                                                            onKeyPress={this._onKeyPress}
+                                                            SelectProps={{native:true}}
+                                                        >
+                                                            {incomeRanges.map(option => (
+                                                            <option key={option.value} value={option.value}>
+                                                                {option.label}
+                                                            </option>
+                                                            ))}
+                                                        </TextField>
+                                                    </form>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col xs={6} md={4} >
+                                                    <form autoComplete="off" spellcheck="false">
+                                                        <TextField
+                                                            id="outlined-select-sex"
+                                                            select
+                                                            className={classes.textField}
+                                                            value={this.state.sex}
+                                                            onChange={this.handleChange('sex')}
+                                                            helperText="Gender?"
+                                                            margin="normal"
+                                                            variant="outlined"
+                                                            label="Sex"
+                                                            InputLabelProps={{className: classes.inputLabelProps}}
+                                                            InputProps={{className: classes.inputBox}}
+                                                            onKeyPress={this._onKeyPress}
+                                                            SelectProps={{native:true}}
+                                                        >
+                                                            {sex.map(option => (
+                                                            <option key={option.value} value={option.value}>
+                                                                {option.label}
+                                                            </option>
+                                                            ))}
+                                                        </TextField>
+                                                    </form>
+                                                </Col>
+                                                <Col xs={12} md={{ span: 4,offset:4}}>
+                                                    <form autoComplete="off" spellcheck="false">
+                                                        <TextField
+                                                            id="outlined-select-agerange"
+                                                            select
+                                                            label='Age'
+                                                            className={classes.textField}
+                                                            value={this.state.ageRange}
+                                                            onChange={this.handleChange('ageRange')}
+                                                            helperText="Age Range"
+                                                            margin="normal"
+                                                            variant="outlined"
+                                                            InputLabelProps={{className: classes.inputLabelProps}}
+                                                            InputProps={{className: classes.inputBox}}
+                                                            onKeyPress={this._onKeyPress}
+                                                            SelectProps={{native:true}}
+                                                        >
+                                                            {ageRanges.map(option => (
+                                                            <option key={option.value} value={option.value}>
+                                                                {option.label}
+                                                            </option>
+                                                            ))}
+                                                        </TextField>
+                                                    </form>
+                                                </Col>
+                                            </Row>
+                                        </React.Fragment>
+                                        ) : ''
+                                    }
                                     </React.Fragment>
-                                    ) : ''
-                                }
-                                </React.Fragment>
-                            </Panel.Body>
-                        </Panel.Collapse>
-                    </Panel>
+                                </Card.Body>
+                            </Accordion.Collapse>
+                        </Card>
+                    </Accordion>
                     <Row>
                         <Col xs={6} md={4}>
                             <div className={classes.buttons}>
@@ -479,7 +515,7 @@ class AddTenant extends Component {
                                     <Button
                                         variant="contained"
                                         color="primary"
-                                        onClick={this.handleSubmitButton}
+                                        onClick={this.handlePhoneNo}
                                         className={classes.button}
                                     >
                                         SUBMIT
@@ -489,7 +525,7 @@ class AddTenant extends Component {
                             </div>
                         </Col>
                     </Row>
-                </Grid>
+                </Container>
             </div>
         )
     }

@@ -13,21 +13,30 @@ const defaultToolbarStyles = {
   },
 };
 
-class CustomToolbar extends React.Component {
-
+class CustomRow extends React.Component {
   reminder = ()=>{
-    fetch('/api/reminder',{method:'POST',headers:{'Accept':'application/json','Content-Type':'application/json'}})
+    const {selectedRow,data} = this.props;
+    const email = data[selectedRow][1];
+    const data2 = JSON.stringify({username:email});
+    fetch('/api/remind',{
+      method:'POST',
+      headers:{
+        'Accept':'application/json',
+        'Content-Type':'application/json'
+      },
+      body:data2
+    })
     .then((response) => response.json())
     .then((response)=>{
       if (response.success === true){
-        swal({text:'Reminder sent!',icon:'success'})
+        swal({text:'Reminders sent!',icon:'success'})
       }
       else {
         swal({text:'Email reminder not sent!',icon:'error'})
       }
     })
     .catch((error)=>{
-      console.log(error);
+      alert(error);
       swal({text:'Error fetching!',icon:'error'});
       swal.stopLoading();
       swal.close();
@@ -35,7 +44,7 @@ class CustomToolbar extends React.Component {
   }
 
   sendReminder = ()=>{
-    swal({text:'Send reminder to all tenants with 15 days or less?',icon:'warning',dangerMode: true,
+    swal({text:'Send reminder?',icon:'warning',dangerMode: true,
       buttons:{
         cancel:true,
         reminder:{text:'Send reminder',closeModal:false}
@@ -57,7 +66,7 @@ class CustomToolbar extends React.Component {
     const { classes } = this.props;
     return (
       <React.Fragment>
-        <Tooltip title='Reminder'>
+        <Tooltip title='Reminder' position='center'>
           <IconButton onClick={this.sendReminder}>
             <AlarmOn className={classes.icon}  />
           </IconButton>
@@ -67,4 +76,4 @@ class CustomToolbar extends React.Component {
   }
 }
 
-export default withStyles(defaultToolbarStyles, { name: "CustomToolbar" })(CustomToolbar);
+export default withStyles(defaultToolbarStyles, { name: "CustomToolbar" })(CustomRow);

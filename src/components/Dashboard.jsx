@@ -153,7 +153,8 @@ class Dashboard extends React.Component {
   state={
     open:false,
     logoutdashboard:false,
-    component:0
+    component:0,
+    selected:0
   }
   
   handleDrawerOpen = () => {
@@ -164,8 +165,12 @@ class Dashboard extends React.Component {
     this.setState({open:false})
   };
 
+  handleClick = (selectedComponent)=>{
+    this.setState({selected:selectedComponent,component:selectedComponent})
+  }
+
   handleLogout = ()=>{
-    const apiUrl = '/api/logout'
+    const apiUrl = '/v1/api/logout'
     fetch(apiUrl,{
     method:'GET',
     headers:{
@@ -188,7 +193,7 @@ class Dashboard extends React.Component {
 
   render() {
     const {classes} = this.props;
-    const {logoutdashboard} = this.state;
+    const {logoutdashboard,selected} = this.state;
 
     if (logoutdashboard) {
       return <Redirect to = '/' />
@@ -241,7 +246,7 @@ class Dashboard extends React.Component {
             
             <List >
   
-              <ListItem button  onClick={()=>{this.setState({component:0})}} >
+              <ListItem button  onClick={()=>this.handleClick(0)} selected={selected === 0} >
                 <ListItemIcon>
                   <HomeOutlined className={classes.iconStyle}/>
                 </ListItemIcon>
@@ -251,7 +256,7 @@ class Dashboard extends React.Component {
               <Divider />
               <Divider />
 
-              <ListItem button  onClick={()=>{this.setState({component:1})}} >
+              <ListItem button  onClick={()=>this.handleClick(1)} selected={selected === 1} >
                 <ListItemIcon>
                   <TableChartOutlined className={classes.iconStyle}/>
                 </ListItemIcon>
@@ -261,7 +266,7 @@ class Dashboard extends React.Component {
               <Divider />
               <Divider />
 
-              <ListItem button  onClick={()=>{this.setState({component:2})}} >
+              <ListItem button  onClick={()=>this.handleClick(2)} selected={selected === 2} >
                 <ListItemIcon>
                   <BarChartOutlined className={classes.iconStyle}/>
                 </ListItemIcon>
@@ -271,12 +276,12 @@ class Dashboard extends React.Component {
               <Divider />
               <Divider />
 
-              <ListItem button onClick={()=>{this.setState({component:3})}} >
+              <ListItem button onClick={()=>this.handleClick(3)} selected={selected === 3} >
                 <ListItemIcon>
                   <PersonAddOutlined className={classes.iconStyle}/>
                 </ListItemIcon>
                 <ListItemText primary={<Typography variant="display3" className={classes.typographyStyle}>Add tenant</Typography>} />
-              </ListItem> 
+              </ListItem>
 
             </List>
             

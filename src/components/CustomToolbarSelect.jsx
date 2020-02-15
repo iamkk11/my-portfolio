@@ -5,6 +5,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import LockOpenOutlined from "@material-ui/icons/LockOpenOutlined";
 import {withStyles} from "@material-ui/core/styles";
 import swal from '@sweetalert/with-react';
+// import LinearProgress from '@material-ui/core/LinearProgress';
+
 
 const defaultToolbarSelectStyles = {
   iconButton: {
@@ -16,8 +18,9 @@ const defaultToolbarSelectStyles = {
   },
   icon: {
     '&:hover': {
-      color: 'peru',
+      color: 'green',
     },
+    color:'peru'
   },
 };
 
@@ -104,12 +107,12 @@ class CustomToolbarSelect extends React.Component {
 
     return (
       <div className={"custom-toolbar-select"}>
-        <Tooltip title='Delete'>
+        <Tooltip title='Delete' position='center'>
           <IconButton className={classes.iconButton} onClick={this.handleDelete}>
             <DeleteIcon className={classes.icon}/>
           </IconButton>
         </Tooltip>
-        <Tooltip title='Reset Password'>
+        <Tooltip title='Reset Password' position='center'>
           <IconButton onClick={this.resetPassword}>
             <LockOpenOutlined className={classes.icon}  />
           </IconButton>
