@@ -14,7 +14,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import {Review} from './Review';
 import {connect} from 'react-redux';
-// import costech2 from '../img/costech2.png';
+import pangishaapp from '../img/ses.png';
 import {RingLoader} from 'react-spinners';
 import {withRouter} from "react-router-dom";
 import swal from '@sweetalert/with-react';
@@ -22,10 +22,7 @@ import swal from '@sweetalert/with-react';
 import {ChooseService} from './ChooseService';
 import * as EdetailsActions from '../actions/EdetailsActions';
 
-import {SelcomServerAddress,user_agent} from '../services';
-
-
-// import Lipa from './Lipa';
+import {user_agent} from '../services';
 
 const styles = theme => ({
   appBar: {
@@ -107,7 +104,7 @@ class Check extends React.Component {
     const {token,basket,newStart,duration,phone,name} = this.props;
     const newStartDate = new Date(newStart);
     const data = JSON.stringify({phone:`${phone}`,name:`${name}`,amount:`${basket[3]}`,duration:duration,startDate:newStartDate});
-    const url = `${SelcomServerAddress}/v1/api/mobilemoney`;
+    const url = `/v1/app/mobilemoney`;
     this.setState({loader:true});
     fetch(url,{
       method:'POST',
@@ -120,10 +117,11 @@ class Check extends React.Component {
       body:data
     })
     .then((response) => response.json())
-    .then((r) => {
-      if(r.success===true){
-        swal('','Malipo yamekamilika','success');
-        this.setState({loader:false})
+    .then((response) => {
+      if(response.success===true){
+        swal('','Ingiza namba yako ya siri kwenye simu yako ili ukamilishe kulipa','success');
+        this.setState({loader:false});
+        this.handleNext();
       }
       else{
         this.setState({loader:false});
@@ -131,8 +129,8 @@ class Check extends React.Component {
       }
     })
     .catch((error) => {
-      this.setState({loading:false});
-      swal('','Kuna kitu hakipo sawa','error');
+      this.setState({loader:false});
+      swal('','Connection hakuna','error');
     })
   }
 
@@ -186,7 +184,7 @@ class Check extends React.Component {
 
   getFees = () =>{
     const {duration,token} = this.props;
-    const data = JSON.stringify({duration:duration})
+    const data = JSON.stringify({duration:duration});
     const url = '/v1/app/getfees';
     fetch(url,{
       method:'POST',
@@ -201,15 +199,19 @@ class Check extends React.Component {
     .then((response) => response.json())
     .then((response)=>{
       this.setState({loader:false});
-      if (response.payload[0]==='NA'){
-        swal('','Mwezi hauruhisiwi','error')
-      }
-      else{
-        this.props.setupBasket(response.payload);
-        this.handleNext();
-      }
+      this.props.setupBasket(response);
+      this.handleNext();
+
+      // if (response.payload[0]==='NA'){
+      //   swal('','Mwezi hauruhisiwi','error')
+      // }
+      // else{
+      //   this.props.setupBasket(response.payload);
+      //   this.handleNext();
+      // }
     })
     .catch((error) => {
+      alert(error)
       swal('','Connection imekatika','error');
       this.setState({loader:false});
     })
@@ -229,6 +231,10 @@ class Check extends React.Component {
     this.setState(state => ({
       activeStep: state.activeStep + 1,
     }));
+  };
+
+  handleReset = () => {
+    this.setState({activeStep: 0});
   };
 
   handleBack = () => {
@@ -261,40 +267,40 @@ class Check extends React.Component {
     })
   }
 
-  hydrateTokenWithLocalStorage(){
-    let key = 'token'
-    if (localStorage.hasOwnProperty(key)) {
-      let value = localStorage.getItem(key);
-      try {
-        value = JSON.parse(value);
-        this.props.tokenStore(value);
-      } 
-      catch (e) {
-        // handle empty string
-        // this.setState({ [key]: value });
-        alert(e)
-      }
-    }
-  }
+  // hydrateTokenWithLocalStorage(){
+  //   let key = 'token'
+  //   if (localStorage.hasOwnProperty(key)) {
+  //     let value = localStorage.getItem(key);
+  //     try {
+  //       value = JSON.parse(value);
+  //       this.props.tokenStore(value);
+  //     } 
+  //     catch (e) {
+  //       // handle empty string
+  //       // this.setState({ [key]: value });
+  //       alert(e)
+  //     }
+  //   }
+  // }
 
-  saveStateToLocalStorage() {
-    let key = 'token';
-    localStorage.setItem(key, JSON.stringify(this.props.token));
-  }
+  // saveStateToLocalStorage() {
+  //   let key = 'token';
+  //   localStorage.setItem(key, JSON.stringify(this.props.token));
+  // }
 
-  componentDidMount = () =>{
-    this.hydrateTokenWithLocalStorage();
-    window.addEventListener('beforeunload', (event) => {
-      this.saveStateToLocalStorage();
-    });
-  }
+  // componentDidMount = () =>{
+  //   this.hydrateTokenWithLocalStorage();
+  //   window.addEventListener('beforeunload', (event) => {
+  //     this.saveStateToLocalStorage();
+  //   });
+  // }
 
-  componentWillUnmount() {
-    window.removeEventListener(
-      "beforeunload",
-      this.saveStateToLocalStorage()
-    );
-  }
+  // componentWillUnmount() {
+  //   window.removeEventListener(
+  //     "beforeunload",
+  //     this.saveStateToLocalStorage()
+  //   );
+  // }
 
   render() {
     const {classes} = this.props;
@@ -309,7 +315,8 @@ class Check extends React.Component {
         <CssBaseline />
           <AppBar position="absolute" color="default" className={classes.appBar}>
             <Toolbar className={classes.toolbar}> 
-              {/* <img alt = '' src = {costech2} height={50} /> */}
+
+              <img src={pangishaapp} height={30} width={30} alt='*'/>
 
               <Typography variant="h6" color="inherit" noWrap className={classes.title}>
                 Pangisha App
@@ -336,17 +343,14 @@ class Check extends React.Component {
               <React.Fragment>
                 {activeStep === steps.length ? (
                   <React.Fragment>
-                    <Typography variant="display1" gutterBottom style={{fontSize:19,fontWeight:'bold'}}>
-                      Thank you for your submission.
-                    </Typography>
-                    <Typography variant="display1" style={{fontSize:15,fontWeight:'bold'}}>
-                      Your data has been saved. It shall not be shared or utilized otherwise in lieu of Personal Data Protection Act and The 2015 National Statistics Act.
+                    <Typography variant="display1" gutterBottom style={{fontSize:19}}>
+                      Asante kwa kulipa.
                     </Typography>
                       <Button
                           variant="contained"
                           color="primary"
                           onClick={this.handleReset}
-                          className={classes.button}
+                          className={classes.buttons}
                         >
                           Reset
                       </Button>    

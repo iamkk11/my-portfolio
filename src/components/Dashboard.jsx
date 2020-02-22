@@ -50,7 +50,8 @@ const styles = theme => ({
     ...theme.mixins.toolbar,
   },
   appBar: {
-    backgroundColor:'	#D3D3D3',
+    // backgroundColor:'	#D3D3D3',
+    backgroundColor:'	#ffffff',
     color: 'black',
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {

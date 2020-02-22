@@ -22,9 +22,9 @@ import swal from '@sweetalert/with-react';
 import {RingLoader} from 'react-spinners';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import grey from '@material-ui/core/colors/grey';
-import {user_agent} from '../services';
 import * as EdetailsActions from '../actions/EdetailsActions';
 import {withRouter} from "react-router-dom";
+import {user_agent} from '../services';
 
 const styles = theme => ({
   background:{
@@ -57,8 +57,10 @@ const styles = theme => ({
 
 class Sign extends Component {
   state = {
-    email:'kevnkiwan@gmail.com',
-    password:'ul',
+    // email:'kevnkiwan@gmail.com',
+    // password:'kq',
+    email:'',
+    password:'',
     alertSweet:'',
     loader:false,
     emailerror:false,
@@ -96,23 +98,22 @@ class Sign extends Component {
     this.setState({loader:true})
     const {email,password} = this.state;
     const data = JSON.stringify({username:email,password:password});
-    const options = {
+    const url = '/auth'
+    fetch(url,{
       method:'POST',
+      credentials:'include',
       headers:{
         'User-Agent':user_agent,
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
       body:data
-    }
-    const apiUrl = '/auth'
-    fetch(apiUrl,options)
+    })
     .then((response) => response.json())
     .then((response) => {
       if(response.success===true){
         this.setState({loader:false});
         this.props.tokenStore(response.token);
-        // _storeData('token',response.token);
         if (response.role === 'admin'){
           this.setState({dash:true,home:false})
         }
@@ -141,8 +142,9 @@ class Sign extends Component {
     fetch(apiUrl,{
     method:'POST',
     headers:{
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
+      'User-Agent':user_agent,
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
     },
     body:data
     })
@@ -194,7 +196,8 @@ class Sign extends Component {
         <CssBaseline />
         <div className={classes.paper}>
           <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
+            <img alt = '' src = {costech} height={50} />
+            {/* <LockOutlinedIcon /> */}
           </Avatar>
           <Typography component="h1" variant="h5">------ Sign in ------</Typography>
           <form className={classes.form} Validate onFocus={this.clearLoginError} spellcheck="false">
@@ -250,11 +253,11 @@ class Sign extends Component {
                 </Button>
               </Grid>
               <Grid item>
-                <Button color='primary'>
+                {/* <Button color='primary'>
                   <a href="https://www.instagram.com/sesemilimited/" >
                     <Typography style={{fontSize:12,color:'black'}}>Don't have an account? Sign Up</Typography>
                   </a>
-                </Button>
+                </Button> */}
               </Grid>
             </Grid>
           </form>
@@ -263,8 +266,8 @@ class Sign extends Component {
           <Typography variant="body2" color="textSecondary" align="center">
             <img src={costech} height={30} width={30} alt='*'/>
             {'Built with love by '}
-            <Link color="inherit" href="https://www.instagram.com/sesemilimited/">
-              Sesemi Company Limited
+            <Link color="inherit" href="https://www.instagram.com/pangishaapp/">
+              Pangisha App Team
             </Link>
           </Typography>
         </Box>

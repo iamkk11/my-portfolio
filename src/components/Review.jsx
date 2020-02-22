@@ -59,22 +59,22 @@ class Rev extends React.Component{
             <tr>
               <td>3</td>
               <td  colSpan="2">Kodi</td>
-              <td>{numberWithCommas(this.props.basket[0])}</td>
+              <td>{numberWithCommas(this.props.basket[0] || '')}</td>
             </tr>
             <tr>
               <td>4</td>
               <td  colSpan="2">Vyengine</td>
-              <td>{numberWithCommas(this.props.basket[1])}</td>
+              <td>{numberWithCommas(this.props.basket[1] || '')}</td>
             </tr>
             <tr>
               <td>5</td>
               <td colSpan="2">Charges</td>
-              <td>{numberWithCommas(this.props.basket[2])}</td>
+              <td>{numberWithCommas(this.props.basket[2]) }</td>
             </tr>
             <tr>
               <td>6</td>
               <td colSpan="2">Jumla</td>
-              <td>{numberWithCommas(this.props.basket[3])}</td>
+              <td>{numberWithCommas(this.props.basket[3] || '') }</td>
             </tr>
           </tbody>
         </Table>
@@ -93,7 +93,7 @@ class Rev extends React.Component{
               onChange={this.handleChangeState('network')}
             >
               <FormControlLabel value="Tigo Pesa" control={<Radio />} label="Tigo Pesa" classes={{label:classes.label}}/>
-              <FormControlLabel value="M-Pesa" control={<Radio />} label="M-Pesa" classes={{label:classes.label}}/>
+              {/* <FormControlLabel value="M-Pesa" control={<Radio />} label="M-Pesa" classes={{label:classes.label}}/> */}
               <FormControlLabel value="Airtel Money" control={<Radio />} label="Airtel Money" classes={{label:classes.label}}/>
             </RadioGroup>
           </Col>
