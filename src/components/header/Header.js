@@ -9,7 +9,7 @@ function Header() {
     <Headroom>
       <header className="header">
         
-        <a href="/" className="logo" rel="noopener noreferrer">
+        <a href="/my-portfolio" className="logo" rel="noopener noreferrer">
           <span className="grey-color"> &lt;</span>
           <span className="logo-name">{greeting.username}</span>
           <span className="grey-color">/&gt;</span>
